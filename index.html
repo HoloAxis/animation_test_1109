@@ -70,6 +70,24 @@
                 }
             );
 
+
+//////////////////////////////////////////////////////////
+//////////////////////////アニメーション///////////////////
+const mixer = new THREE.AnimationMixer(model);
+const clips = gltf.animations;
+const action = mixer.clipAction(clips[0]); // クリップの選択
+action.play(); // アニメーションを再生
+
+// アニメーションの更新を毎フレーム呼び出す
+const animate = () => {
+  requestAnimationFrame(animate);
+  mixer.update(0.01); // アニメーションの進行
+  renderer.render(scene, camera);
+};
+animate();
+
+
+            
             // アニメーションのループ
             function animate() {
                 requestAnimationFrame(animate);
