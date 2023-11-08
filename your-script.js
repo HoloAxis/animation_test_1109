@@ -1,0 +1,43 @@
+// シーンの作成
+const scene = new THREE.Scene();
+
+// カメラの作成
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = 5;
+
+// レンダラーの作成
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// モデルの読み込み
+const loader = new THREE.GLTFLoader();
+let model;
+
+loader.load('box_animation.gltf', (gltf) => {
+    model = gltf.scene;
+    scene.add(model);
+
+    // アニメーションの再生
+    const mixer = new THREE.AnimationMixer(model);
+    gltf.animations.forEach((clip) => {
+        mixer.clipAction(clip).play();
+    });
+
+    // レンダリングループの設定
+    const animate = () => {
+        requestAnimationFrame(animate);
+        mixer.update(0.01); // アニメーションの進行
+        renderer.render(scene, camera);
+    };
+    animate();
+});
+
+// リサイズ時の処理
+window.addEventListener('resize', () => {
+    const newWidth = window.innerWidth;
+    const newHeight = window.innerHeight;
+    renderer.setSize(newWidth, newHeight);
+    camera.aspect = newWidth / newHeight;
+    camera.updateProjectionMatrix();
+});
